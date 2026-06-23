@@ -1,0 +1,55 @@
+services:
+  mailserver:
+    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    container_name: mailserver
+    hostname: mail.ugi0.org
+    ports:
+      - "20025:25"
+      - "20465:465"
+      - "20587:587"
+      - "20993:993"
+    volumes:
+      - ./backend/docker-data/dms/mail-data/:/var/mail/
+      - ./backend/docker-data/dms/mail-state/:/var/mail-state/
+      - ./backend/docker-data/dms/mail-logs/:/var/log/mail/
+      - ./backend/docker-data/dms/config/:/tmp/docker-mailserver/
+      - /etc/localtime:/etc/localtime:ro
+      - ./backend/certs:/tmp/docker-mailserver/certs:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+   #   - ./postfix-conf/main.cf:/etc/postfix/main.cf
+    env_file: ./backend/.env
+    cap_add:
+      - NET_ADMIN
+    restart: on-failure
+    networks:
+      - mailnet
+      - default
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: mailserver-frontend-dev
+    ports:
+      - "20080:3000"
+    volumes:
+      - ./frontend:/app
+      - /frontend/node_modules
+    restart: on-failure
+  
+  database:
+    image: postgres:16
+    container_name: mailserver-db
+    env_file:
+      - backend/db.env
+    volumes:
+      - mailserver-db-data:/var/lib/postgresql/data
+      - ./backend/db-init.sql:/docker-entrypoint-initdb.d/db-init.sql:ro
+    restart: on-failure
+
+networks:
+  mailnet:
+    external: true
+
+volumes:
+  mailserver-db-data:

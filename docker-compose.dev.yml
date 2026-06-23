@@ -1,0 +1,32 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+    container_name: mailserver-frontend-dev
+    ports:
+      - "80:5173"
+    volumes:
+      - ./frontend:/app
+      - /frontend/node_modules
+    environment:
+      - NODE_ENV=development
+    restart: on-failure
+  
+  database:
+    image: postgres:16
+    container_name: mailserver-db
+    env_file:
+      - backend/db.env
+    volumes:
+      - mailserver-db-data:/var/lib/postgresql/data
+      - ./backend/db-init.sql:/docker-entrypoint-initdb.d/db-init.sql:ro
+    restart: on-failure
+
+networks:
+  mailnet:
+    external: true
+
+volumes:
+  mailserver-db-data:
