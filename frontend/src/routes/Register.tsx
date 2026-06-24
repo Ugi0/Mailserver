@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./Register.css";
-import { createAccount, validateLoginCredentials, validateRegistryCode } from "../helpers/register";
+import { createAccount, validateRegistryCode } from "../helpers/register";
+import CredentialsPage from "../components/CredentialsPage";
 
 export default function Register() {
   const [registrationCode, setRegistrationCode] = useState("");
@@ -36,60 +37,6 @@ export default function Register() {
   return (
     <div>
       Loading...
-    </div>
-  );
-}
-
-function CredentialsPage({ setCredentials }: { setCredentials: (credentials: { username: string; password: string }) => void }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-
-  return (
-    <div className="register-container">
-      <div className="register-card">
-        <h1 className="title">Tokkicorp Mailbox</h1>
-
-        <p className="description">
-          Your registration code has been validated. Please enter your desired username and password to complete the registration process.
-        </p>
-
-        <form className="register-form">
-          <div className="input-group">
-            <input
-              id="email"
-              type="text"
-              placeholder="username"
-              className="input username-input"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <span className="input-suffix">@tokkicorp.com</span>
-          </div>
-          <input
-            id="password"
-            type="password"
-            placeholder="Enter Password"
-            className="input"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
-          <button type="submit" className="button" onClick={() => {
-            const validationMessage = validateLoginCredentials(username, password);
-
-            if (validationMessage === "") {
-              setCredentials({
-                username: `${username}@tokkicorp.com`,
-                password
-              });
-            } else {
-              alert(validationMessage);
-            }
-          }}>
-            Register
-          </button>
-        </form>
-      </div>
     </div>
   );
 }

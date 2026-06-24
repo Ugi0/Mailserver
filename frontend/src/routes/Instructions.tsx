@@ -49,8 +49,8 @@ export default function Instructions() {
                 : {}
             }
           >
-            <p style={disagreeCounter > 10 ? { color: "red", fontWeight: "bold", fontSize: "1.1rem" } : {}}>
-              {disagreeCounter > 10 ? "I am very persistent and annoying" : "I Don't Agree"}
+            <p style={disagreeCounter > 20 ? { color: "red", fontWeight: "bold", fontSize: "1.1rem" } : {}}>
+              {disagreeCounter > 20 ? "I am very persistent and annoying" : "I Don't Agree"}
             </p>
           </button>
 
