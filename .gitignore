@@ -3,6 +3,6 @@ certs
 ADDING_DOMAINS.txt
 mailworker
 node_modules
-.env
+*.env
 db.env
 .vscode
