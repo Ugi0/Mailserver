@@ -17,5 +17,5 @@ CREATE TABLE IF NOT EXISTS registration_codes (
     id SERIAL PRIMARY KEY,
     code VARCHAR(255) UNIQUE NOT NULL,
     used BOOLEAN DEFAULT FALSE,
-    used_by INTEGER;
+    used_by INTEGER
 );

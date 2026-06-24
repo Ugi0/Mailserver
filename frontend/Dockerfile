@@ -1,4 +1,4 @@
-FROM node:20-slim AS dev
+FROM node:22-slim AS dev
 
 WORKDIR /app
 COPY package*.json ./
@@ -9,7 +9,7 @@ EXPOSE 5173
 CMD ["npm", "run", "dev"]
 
 
-FROM node:20-slim AS build
+FROM node:22-slim AS build
 
 WORKDIR /app
 COPY package*.json ./

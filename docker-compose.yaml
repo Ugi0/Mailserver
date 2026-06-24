@@ -9,21 +9,26 @@ services:
       - "20587:587"
       - "20993:993"
     volumes:
-      - ./backend/docker-data/dms/mail-data/:/var/mail/
-      - ./backend/docker-data/dms/mail-state/:/var/mail-state/
-      - ./backend/docker-data/dms/mail-logs/:/var/log/mail/
-      - ./backend/docker-data/dms/config/:/tmp/docker-mailserver/
+      - ./mailworker/docker-data/dms/mail-data/:/var/mail/
+      - ./mailworker/docker-data/dms/mail-state/:/var/mail-state/
+      - ./mailworker/docker-data/dms/mail-logs/:/var/log/mail/
+      - ./mailworker/docker-data/dms/config/:/tmp/docker-mailserver/
       - /etc/localtime:/etc/localtime:ro
-      - ./backend/certs:/tmp/docker-mailserver/certs:ro
+      - ./mailworker/certs:/tmp/docker-mailserver/certs:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
    #   - ./postfix-conf/main.cf:/etc/postfix/main.cf
-    env_file: ./backend/.env
+    env_file: ./mailworker/.env
     cap_add:
       - NET_ADMIN
     restart: on-failure
     networks:
-      - mailnet
-      - default
+      default:
+        aliases:
+          - mail.ugi0.org
+      mailnet:
+        aliases:
+          - mail.ugi0.org
+
 
   frontend:
     build:
@@ -46,6 +51,34 @@ services:
       - mailserver-db-data:/var/lib/postgresql/data
       - ./backend/db-init.sql:/docker-entrypoint-initdb.d/db-init.sql:ro
     restart: on-failure
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mailserver-backend
+    ports:
+      - "20081:8080"
+    env_file:
+      - backend/.env
+    restart: on-failure
+    networks:
+      - default
+      - mailnet
+
+
+  sieve-helper:
+    build:
+      context: ./sieve-helper
+      dockerfile: Dockerfile
+    container_name: mailserver-sieve-helper
+    env_file:
+      - ./sieve-helper/.env
+    restart: on-failure
+    networks:
+      - default
+      - mailnet
+
 
 networks:
   mailnet:

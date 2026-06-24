@@ -1,3 +1,3 @@
-export function checkCredentials(username: string, password: string): boolean {
+export function checkCredentials(_username: string, _password: string): boolean {
   return true;
 }

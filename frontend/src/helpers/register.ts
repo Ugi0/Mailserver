@@ -1,11 +1,11 @@
-export function validateRegistryCode(code: string): boolean {
+export function validateRegistryCode(_code: string): boolean {
   return true;
 }
 
-export function validateLoginCredentials(username: string, password: string): string {
+export function validateLoginCredentials(_username: string, _password: string): string {
   return "";
 }
 
-export function createAccount(username: string, password: string, registrationCode: string): boolean {
+export function createAccount(_username: string, _password: string, _registrationCode: string): boolean {
   return true;
 }

@@ -9,7 +9,7 @@ export default function EmailSettingsView() {
   const [aliasInput, setAliasInput] = useState("");
   const [aliases, setAliases] = useState<string[]>([]);
 
-  const [rules, setRules] = useState(["Move 'invoice' → Finance"]);
+  const [rules] = useState(["Move 'invoice' → Finance"]);
   const [vacationEnabled, setVacationEnabled] = useState(false);
   const [vacationMsg, setVacationMsg] = useState("");
 
