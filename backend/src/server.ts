@@ -1,6 +1,8 @@
 import http, { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import sendJson from "./utils/sendJson.js";
+import handleUsers from "./routes/users.js";
+import handleRules from "./routes/rules.js";
 
 const PORT = Number(process.env.PORT) || 8080;
 
@@ -33,6 +35,14 @@ const server = http.createServer(
 
       if (url.pathname === "/healthz") {
         return sendJson(res, 200, { ok: true });
+      }
+
+      if (url.pathname === "/users") {
+        return await handleUsers(req, res, url);
+      }
+
+      if (url.pathname === "/rules") {
+        return await handleRules(req, res, url);
       }
 
       res.writeHead(404, { "Content-Type": "text/plain" });
