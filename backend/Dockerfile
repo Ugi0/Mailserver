@@ -16,6 +16,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY tsconfig.json ./
+COPY generateCodes.js ./
 COPY src ./src
 RUN npm run build
 
@@ -28,6 +29,7 @@ COPY package*.json ./
 RUN npm install --omit=dev
 
 COPY --from=build /app/dist ./dist
+COPY generateCodes.js .
 
 ENV NODE_ENV=production
 ENV PORT=8080

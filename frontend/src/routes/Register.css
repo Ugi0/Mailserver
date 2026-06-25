@@ -8,7 +8,7 @@
 
 .register-card {
   background: #181a1b;
-  padding: 0.5rem 2rem 2rem 2rem;
+  padding: 0.5rem 2rem 1.5rem 2rem;
   border-radius: 12px;
   width: 700px;
   box-shadow: 5px 10px 25px rgba(0, 0, 0, 0.15);
@@ -108,4 +108,21 @@
   font-size: 1rem;
   margin-left: 4px;
   white-space: nowrap;
+}
+
+.secondary-link {
+  margin-top: 1rem;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: end;
+}
+
+.secondary-link span {
+  color: #4f46e5;
+  font-weight: bold;
+}
+
+.secondary-link:hover span {
+  text-decoration: underline;
 }

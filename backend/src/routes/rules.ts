@@ -1,7 +1,10 @@
-import { IncomingMessage, ServerResponse } from "http";
-import { parseCookies } from "../utils/parseCookies.js";
+import { Router, Request, Response } from "express";
 
-export default async function handleRules(req: IncomingMessage, res: ServerResponse, url: URL) {
-    const cookies = parseCookies(req);
-    const sessionId = cookies.session_id;
-}
+const router = Router();
+
+router.get("/", async (req: Request, res: Response) => {
+  // GET /api/rules
+  res.json({ rules: [] });
+});
+
+export default router;

@@ -13,10 +13,8 @@ export default function CredentialsPage({
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  // 🔥 Tracks how many rules have been revealed
   const [revealedCount, setRevealedCount] = useState(0);
 
-  // 🔥 Stores last evaluation (only updates when button pressed)
   const [evaluatedRules, setEvaluatedRules] = useState<
     { message: string; passed: boolean, subtext?: string }[]
   >([]);
@@ -24,7 +22,6 @@ export default function CredentialsPage({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Evaluate rules ONLY here
     const results = passwordRules.map((rule) => ({
       message: rule.message,
       passed: rule.check(password),
@@ -33,7 +30,6 @@ export default function CredentialsPage({
 
     setEvaluatedRules(results);
 
-    // 🔥 Progressive reveal
     let newRevealCount = revealedCount;
 
     for (let i = 0; i < results.length; i++) {
@@ -78,7 +74,6 @@ export default function CredentialsPage({
             <span className="input-suffix">@tokkicorp.com</span>
           </div>
 
-          {/* 🔥 Password field + sliding panel wrapper */}
           <div className="password-section">
             <input
               id="password"
@@ -89,7 +84,6 @@ export default function CredentialsPage({
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            {/* 🔥 Sliding rule panel */}
             <div
               className={`rules-panel ${
                 revealedCount > 0 ? "open" : ""

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Register.css";
-import { createAccount, validateRegistryCode } from "../helpers/register";
+import { createAccount, validateLoginCredentials, validateRegistryCode } from "../helpers/register";
 import CredentialsPage from "../components/CredentialsPage";
 
 export default function Register() {
@@ -19,15 +19,25 @@ export default function Register() {
   }
 
   if (!username || !password) {
-    return <CredentialsPage setCredentials={setCredentials} />;
+    return <CredentialsPage setCredentials={async (credentials: {username: string, password: string}) => {
+      const validationMessage = await validateLoginCredentials(credentials.username, credentials.password);
+      if (validationMessage) {
+        alert(validationMessage);
+        return;
+      }
+      setCredentials(credentials);
+    }
+    } />;
   }
 
   if (registrationCode && username && password && !accountCreated) {
-    if (createAccount(username, password, registrationCode)) {
-      setAccountCreated(true);
-    } else {
-      alert("Account creation failed. Please try again.");
-    }
+    createAccount(username, password, registrationCode).then((success) => {
+      if (success) {
+        setAccountCreated(true);
+      } else {
+        alert("Account creation failed. Please try again.");
+      }
+    });
   }
 
   if (accountCreated) {
@@ -58,7 +68,17 @@ function CodePage({ setValidatedCode }: { setValidatedCode: (code: string) => vo
           <a href="mailto:ugi@tokkicorp.com"> ugi@tokkicorp.com</a>.
         </p>
 
-        <form className="register-form">
+        <form className="register-form"
+          onSubmit={async (e) => {
+            e.preventDefault();
+
+            if (await validateRegistryCode(registrationCode)) {
+              setValidatedCode(registrationCode);
+            } else {
+              alert("Invalid registration code. Please try again.");
+            }
+          }}
+        >
           <input
             id="registration-code"
             type="text"
@@ -68,13 +88,7 @@ function CodePage({ setValidatedCode }: { setValidatedCode: (code: string) => vo
             onChange={(e) => setRegistrationCode(e.target.value)}
           />
 
-          <button type="submit" className="button" onClick={() => {
-            if (validateRegistryCode(registrationCode)) {
-              setValidatedCode(registrationCode);
-            } else {
-              alert("Invalid registration code. Please try again.");
-            }
-          }}>
+          <button type="submit" className="button">
             Register
           </button>
         </form>

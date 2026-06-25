@@ -1,12 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Instructions.css";
 import EmailInstructions from "../components/EmailInstructions";
+import { agreeToTerms } from "../helpers/register";
 
 export default function Instructions() {
   const [agreedToRules, setAgreedToRules] = useState(false);
   const [disagreeHovered, setDisagreeHovered] = useState(false);
   const [disagreeLocation, setDisagreeLocation] = useState({ x: 0, y: 0 });
   const [disagreeCounter, setDisagreeCounter] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAgreement = async () => {
+      const response = await fetch("/api/registration-code", {
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAgreedToRules(data.agreedToTerms);
+        setLoading(false);
+      }
+    };
+
+    checkAgreement();
+  }, []);
+
+  if (loading) return null;
 
   return (
     <div className="instructions-container">
@@ -54,7 +74,10 @@ export default function Instructions() {
             </p>
           </button>
 
-          <button id="agree-button" onClick={() => setAgreedToRules(true)}>
+          <button id="agree-button" onClick={async () => {
+            await agreeToTerms();
+            setAgreedToRules(true);
+          }}>
             I Agree
           </button>
         </div>

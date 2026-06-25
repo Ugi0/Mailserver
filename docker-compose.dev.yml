@@ -31,7 +31,7 @@ services:
       target: dev
     container_name: mailserver-backend-dev
     ports:
-      - "20081:8080"
+      - "8080:8080"
     volumes:
       - ./backend:/app
       - /app/node_modules
@@ -47,10 +47,6 @@ services:
     env_file:
       - ./sieve-helper/.env
     restart: on-failure
-
-networks:
-  mailnet:
-    external: true
 
 volumes:
   mailserver-db-data:
