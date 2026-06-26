@@ -2,6 +2,7 @@ import { spawn } from "child_process";
 import { sieveClient } from "../services/sieveClient.js";
 
 function validateEmail(email: string): boolean {
+  console.log("Validating email:", email);
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return emailRegex.test(email);
 }

@@ -17,6 +17,7 @@ CREATE TABLE forwarding_rules (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
 
+    source_email VARCHAR(255) NOT NULL,
     destination_email VARCHAR(255) NOT NULL,
 
     enabled BOOLEAN DEFAULT true,

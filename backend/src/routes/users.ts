@@ -41,13 +41,15 @@ router.post("/create", async (req: Request, res: Response) => {
       return res.status(400).send("Username is already taken");
     }
 
-    const userId = await createUser(username, password);
-    await markCodeAsUsed(registrationCode, userId);
+    let userId;
 
     const email = `${username}@tokkicorp.com`;
 
     try {
       await createMailbox(email, password);
+      
+      userId = await createUser(email, password);
+      await markCodeAsUsed(registrationCode, userId);
     } catch (mailError) {
       console.error("Mailbox creation failed:", mailError);
 

@@ -28,6 +28,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --omit=dev
 
+RUN apt-get update && apt-get install -y docker.io && rm -rf /var/lib/apt/lists/*
+
 COPY --from=build /app/dist ./dist
 COPY generateCodes.js .
 

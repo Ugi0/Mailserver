@@ -45,7 +45,7 @@ export default function CredentialsPage({
 
     if (allPassed) {
       setCredentials({
-        username: `${username}@tokkicorp.com`,
+        username,
         password,
       });
     }
