@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import "./Manage.css";
 import { addForwarding, removeForwarding } from "../helpers/forwarding";
-import type { ForwardingEmail } from "../types/managementTypes";
+import type { Alias, ForwardingEmail } from "../types/managementTypes";
 
 export default function EmailSettingsView() {
   const [aliasInput, setAliasInput] = useState<string>("");
-  const [aliases, setAliases] = useState<string[]>([]);
+  const [aliases, setAliases] = useState<Alias[]>([]);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -47,15 +47,22 @@ export default function EmailSettingsView() {
       });
   }, []);
 
-  const addAlias = () => {
+  const addAlias = async () => {
     if (aliasInput.trim()) {
-      setAliases([...aliases, aliasInput]);
+      setAliases([...aliases, { alias_email: aliasInput }]);
       setAliasInput("");
     }
+    await addForwarding(aliasInput, email).catch((err) => {
+      console.error("Error adding alias:", err);
+    });
   };
 
-  const removeAlias = (index: number) => {
+  const removeAlias = async (index: number) => {
+    const aliasToRemove = aliases[index];
     setAliases(aliases.filter((_, i) => i !== index));
+    await removeForwarding(aliasToRemove.id).catch((err) => {
+      console.error("Error removing alias:", err);
+    });
   };
 
   if (loading) {
@@ -82,7 +89,7 @@ export default function EmailSettingsView() {
         <div className="card">
           <div className="card-content">
             <h2>
-              Aliases
+              Aliases {aliases.length}/5
               <span className="tooltip">
                 ?
                 <span className="tooltip-text">
@@ -92,22 +99,24 @@ export default function EmailSettingsView() {
               </span>
             </h2>
 
-            <div className="row">
-              <input
-                className="input"
-                placeholder="alias@domain.com"
-                value={aliasInput}
+            {aliases.length < 5 && (
+              <div className="row">
+                <input
+                  className="input"
+                  placeholder="alias@domain.com"
+                  value={aliasInput}
                 onChange={(e) => setAliasInput(e.target.value)}
               />
               <button className="btn" onClick={addAlias}>
                 Add
               </button>
             </div>
+            )}
 
             <ul className="list">
               {aliases.map((a, i) => (
                 <li key={i}>
-                  {a}
+                  {a.alias_email}
                   <button onClick={() => removeAlias(i)}>Remove</button>
                 </li>
               ))}

@@ -1,6 +1,9 @@
 import express, { Request, Response, NextFunction } from "express";
 import handleUsers from "./routes/users.js";
 import handleRules from "./routes/rules.js";
+import handleFilters from "./routes/filters.js";
+import handleForwarding from "./routes/forwarding.js";
+import handleAutoReply from "./routes/autoreply.js";
 import handleRegistrationCode from "./routes/registrationCode.js";
 import cors from "cors";
 import { authMiddleware } from "./helpers/middleware.js";
@@ -36,6 +39,9 @@ api.use("/registration-code", handleRegistrationCode);
 
 api.use("/users", handleUsers);
 api.use("/rules", authMiddleware, handleRules);
+api.use("/filters", authMiddleware, handleFilters);
+api.use("/forwarding", authMiddleware, handleForwarding);
+api.use("/autoreply", authMiddleware, handleAutoReply);
 
 app.use((req: Request, res: Response) => {
   res.status(404).send("Not Found");

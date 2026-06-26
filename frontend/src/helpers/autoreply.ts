@@ -1,7 +1,7 @@
 import { handleResponse } from "./forwarding";
 
 export async function setAutoReply(email: string, subject: string, message: string, days: number = 1): Promise<any | null> {
-  const response = await fetch("/api/rules/autoreply", {
+  const response = await fetch("/api/autoreply", {
     method: "POST",
         
     headers: {
@@ -19,7 +19,7 @@ export async function setAutoReply(email: string, subject: string, message: stri
 }
 
 export async function removeAutoReply(ruleId: number): Promise<any | null> {
-  const response = await fetch(`/api/rules/autoreply/${ruleId}`, {
+  const response = await fetch(`/api/autoreply/${ruleId}`, {
     method: "DELETE",
     credentials: "include",
   });

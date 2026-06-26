@@ -60,3 +60,69 @@ export async function createMailbox(email: string, password: string): Promise<vo
     console.error("Sieve initialization failed:", err);
   }
 }
+
+export async function addAlias(email: string, alias: string): Promise<void> {
+  if (!validateEmail(email) || !validateEmail(alias)) {
+    throw new Error("Invalid email or alias format");
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    const proc = spawn("docker", [
+      "exec",
+      "mailserver",
+      "setup",
+      "alias",
+      "add",
+      alias,
+      email,
+    ], {
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+
+    let errOutput = "";
+
+    proc.stderr.on("data", (data) => {
+      errOutput += data.toString();
+    });
+
+    proc.on("close", (code) => {
+      if (code !== 0) {
+        return reject(new Error(`Alias creation failed: ${errOutput}`));
+      }
+      resolve();
+    });
+  });
+}
+
+export async function removeAlias(email: string, alias: string): Promise<void> {
+  if (!validateEmail(email) || !validateEmail(alias)) {
+    throw new Error("Invalid alias format");
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    const proc = spawn("docker", [
+      "exec",
+      "mailserver",
+      "setup",
+      "alias",
+      "del",
+      email,
+      alias,
+    ], {
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+
+    let errOutput = "";
+
+    proc.stderr.on("data", (data) => {
+      errOutput += data.toString();
+    });
+
+    proc.on("close", (code) => {
+      if (code !== 0) {
+        return reject(new Error(`Alias removal failed: ${errOutput}`));
+      }
+      resolve();
+    });
+  });
+}

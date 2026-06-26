@@ -1,7 +1,7 @@
 import { handleResponse } from "./forwarding";
 
 export async function addFilter(email: string, field: string, value: string, folder: string): Promise<any | null> {
-  const response = await fetch("/api/rules/filter", {
+  const response = await fetch("/api/filter", {
     method: "POST",
     credentials: "include",
     headers: {
@@ -19,7 +19,7 @@ export async function addFilter(email: string, field: string, value: string, fol
 }
 
 export async function removeFilter(ruleId: number): Promise<any | null> {
-  const response = await fetch(`/api/rules/filter/${ruleId}`, {
+  const response = await fetch(`/api/filter/${ruleId}`, {
     method: "DELETE",
     credentials: "include",
   });
@@ -34,7 +34,7 @@ export async function toggleRule(id: number, enabled: boolean, setRules: React.D
     )
   );
 
-  await fetch(`/api/rules/forward/${id}/toggle`, {
+  await fetch(`/api/forward/${id}/toggle`, {
     method: "POST",
     credentials: "include",
     headers: {
