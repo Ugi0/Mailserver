@@ -27,7 +27,6 @@ export default function EmailSettingsView() {
   return (
     <div className="container">
 
-      {/* Header */}
       <div className="header">
         <button onClick={() => (window.location.href = "/instructions")}>
           ← Back to instructions
@@ -37,7 +36,6 @@ export default function EmailSettingsView() {
 
       <div className="email-settings">
 
-        {/* Identity (read-only) */}
         <div className="card">
           <div className="card-content">
             <h2>
@@ -47,7 +45,6 @@ export default function EmailSettingsView() {
           </div>
         </div>
 
-        {/* Aliases */}
         <div className="card">
           <div className="card-content">
             <h2>
@@ -70,7 +67,6 @@ export default function EmailSettingsView() {
               <button className="btn" onClick={addAlias}>Add</button>
             </div>
 
-            {/* Alias list */}
             <ul className="list">
               {aliases.map((a, i) => (
                 <li key={i}>
@@ -82,7 +78,6 @@ export default function EmailSettingsView() {
           </div>
         </div>
 
-        {/* Forwarding */}
         <div className="card">
           <div className="card-content">
             <h2>
@@ -115,7 +110,6 @@ export default function EmailSettingsView() {
           </div>
         </div>
 
-        {/* Filters / Rules */}
         <div className="card">
           <div className="card-content">
             <h2>
@@ -140,7 +134,6 @@ export default function EmailSettingsView() {
           </div>
         </div>
 
-        {/* Vacation */}
         <div className="card">
           <div className="card-content">
             <h2>

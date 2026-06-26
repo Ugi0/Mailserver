@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
-import { hasUserAgreedToTerms, validateRegistrationCode } from "../helpers/dbHelpers.js";
 import { authMiddleware } from "../helpers/middleware.js";
+import { hasUserAgreedToTerms, validateRegistrationCode } from "../services/db_queries.js";
 
 const router = Router();
 

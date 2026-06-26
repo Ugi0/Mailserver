@@ -62,6 +62,8 @@ services:
     env_file:
       - backend/.env
     restart: on-failure
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - default
       - mailnet
