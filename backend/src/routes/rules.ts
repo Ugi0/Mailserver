@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import db from "../services/db.js";
+import { Alias } from "../types/Alias.js";
 
 const router = Router();
 
@@ -27,7 +28,7 @@ router.get("/", async (req: Request, res: Response) => {
 
     const aliases = forwardingRows
       .filter((f) => f.destination_email === email)
-      .map((f) => f.source_email);
+      .map((f) => { return { id: f.id, alias_email: f.source_email }; }) as Alias[];
 
     const forwardingRule = forwardingRows.find(
       (f) => f.source_email === email

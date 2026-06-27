@@ -5,6 +5,7 @@ import handleFilters from "./routes/filters.js";
 import handleForwarding from "./routes/forwarding.js";
 import handleAutoReply from "./routes/autoreply.js";
 import handleRegistrationCode from "./routes/registrationCode.js";
+import handleAliases from "./routes/aliases.js";
 import cors from "cors";
 import { authMiddleware } from "./helpers/middleware.js";
 import cookieParser from "cookie-parser";
@@ -40,6 +41,7 @@ api.use("/registration-code", handleRegistrationCode);
 api.use("/users", handleUsers);
 api.use("/rules", authMiddleware, handleRules);
 api.use("/filters", authMiddleware, handleFilters);
+api.use("/alias", authMiddleware, handleAliases);
 api.use("/forwarding", authMiddleware, handleForwarding);
 api.use("/autoreply", authMiddleware, handleAutoReply);
 

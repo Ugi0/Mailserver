@@ -21,6 +21,17 @@ router.post("/", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Alias email is required" });
     }
 
+    const currentAliasesResult = await db.query(
+      "SELECT * FROM forwarding_rules WHERE user_id = $1 AND destination_email = $2",
+      [userId, email]
+    );
+
+    const currentAliases = currentAliasesResult.rows;
+
+    if (currentAliases.length >= 5) {
+      return res.status(400).json({ error: "You can only add up to 5 aliases." });
+    }
+
     await addAlias(email, alias);
 
     const result = await db.query(

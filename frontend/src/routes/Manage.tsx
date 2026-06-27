@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Manage.css";
-import { addForwarding, removeForwarding } from "../helpers/forwarding";
+import { addForwarding, addForwardingAlias, removeForwarding, removeForwardingAlias } from "../helpers/forwarding";
 import type { Alias, ForwardingEmail } from "../types/managementTypes";
 
 export default function EmailSettingsView() {
@@ -48,19 +48,37 @@ export default function EmailSettingsView() {
   }, []);
 
   const addAlias = async () => {
-    if (aliasInput.trim()) {
+    const email = aliasInput.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+    if (!email.endsWith("@tokkicorp.com")) {
+      alert("Only @tokkicorp.com aliases are allowed.");
+      return;
+    }
+    if (aliases.length >= 5) {
+      alert("You can only add up to 5 aliases.");
+      return;
+    }
+    try {
+      await addForwardingAlias(aliasInput, email);
+
       setAliases([...aliases, { alias_email: aliasInput }]);
       setAliasInput("");
+    } catch (err) {
+      alert(err);
+      console.error(err);
     }
-    await addForwarding(aliasInput, email).catch((err) => {
-      console.error("Error adding alias:", err);
-    });
   };
 
   const removeAlias = async (index: number) => {
     const aliasToRemove = aliases[index];
-    setAliases(aliases.filter((_, i) => i !== index));
-    await removeForwarding(aliasToRemove.id).catch((err) => {
+    await removeForwardingAlias(aliasToRemove.id).then(() => {
+      console.log("Alias removed successfully");
+      setAliases(aliases.filter((_, i) => i !== index));
+    }).catch((err) => {
       console.error("Error removing alias:", err);
     });
   };
@@ -103,10 +121,10 @@ export default function EmailSettingsView() {
               <div className="row">
                 <input
                   className="input"
-                  placeholder="alias@domain.com"
+                  placeholder="alias@tokkicorp.com"
                   value={aliasInput}
-                onChange={(e) => setAliasInput(e.target.value)}
-              />
+                  onChange={(e) => setAliasInput(e.target.value)}
+                />
               <button className="btn" onClick={addAlias}>
                 Add
               </button>

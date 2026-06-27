@@ -3,7 +3,7 @@ export async function handleResponse<T>(response: Response): Promise<T | null> {
     return await response.json();
   } else {
     const error = await response.json();
-    throw new Error(error.message || "Request failed");
+    throw new Error(error.message || error.error || "Request failed");
   }
 }
 
@@ -37,7 +37,7 @@ export async function removeForwarding(ruleId: number | undefined): Promise<any 
   return handleResponse(response);
 }
 
-export async function addAlias(alias: string, email: string): Promise<any | null> {
+export async function addForwardingAlias(alias: string, email: string): Promise<any | null> {
   if (!alias || alias.trim() === "") {
     throw new Error("Alias email is required");
   }
@@ -56,7 +56,7 @@ export async function addAlias(alias: string, email: string): Promise<any | null
   return handleResponse(response);
 }
 
-export async function removeAlias(ruleId: number | undefined): Promise<any | null> {
+export async function removeForwardingAlias(ruleId: number | undefined): Promise<any | null> {
   console.log("Removing alias rule with ID:", ruleId);
   if (!ruleId) return null;
   const response = await fetch(`/api/alias/${ruleId}`, {
