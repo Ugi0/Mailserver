@@ -98,6 +98,5 @@ export default function Instructions() {
 function getRandomPosition() {
   const x = Math.floor(Math.random() * (window.innerWidth - 100));
   const y = Math.floor(Math.random() * (window.innerHeight - 50));
-  console.log(`New position: x=${x}, y=${y}`);
   return { x, y };
 }

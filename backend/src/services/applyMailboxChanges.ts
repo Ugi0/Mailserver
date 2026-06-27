@@ -53,8 +53,6 @@ export async function rebuildAndApply(userId: number, email: string) {
     filters: sieveFilters,
   };
 
-  console.log(payload);
-
   if (responder.rows.length) {
     const rule = JSON.parse(responder.rows[0].message);
 

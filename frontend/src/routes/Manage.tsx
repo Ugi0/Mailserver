@@ -36,8 +36,6 @@ export default function EmailSettingsView() {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
-
         setEmail(data.email || "");
         setFilters(data.filters || []);
         setAliases(data.aliases || []);
@@ -57,10 +55,8 @@ export default function EmailSettingsView() {
 
   const handleRuleToggle = (index: number) => {
     const rule = filters[index];
-    console.log("Toggling rule:", rule);
 
     toggleRule(rule.id, !(rule.enabled !== false)).then(() => {
-      console.log("Rule toggled successfully");
       setFilters((prev) =>
         prev.map((r, i) =>
           i === index ? { ...r, enabled: !r.enabled } : r
@@ -303,7 +299,6 @@ export default function EmailSettingsView() {
 
                   request
                     .then((response) => {
-                      console.log("Rule saved:", response);
 
                       if (isEditing) {
                         const updated = [...filters];

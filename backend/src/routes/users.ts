@@ -97,7 +97,7 @@ router.get("/me", authMiddleware, async (req: Request, res: Response) => {
   res.json({ user: req.user?.userId });
 });
 
-router.post("/verify", async (req: Request, res: Response) => {
+router.post("/authorize", async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
   const userId = await verifyUser(username, password);
