@@ -48,11 +48,6 @@ CREATE TABLE sieve_rules (
 CREATE TABLE responder_rules (
     id SERIAL PRIMARY KEY,
     user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-
-    enabled BOOLEAN DEFAULT true,
-    subject VARCHAR(255),
     message TEXT NOT NULL,
-    days INTEGER DEFAULT 1,
-
     created_at TIMESTAMP DEFAULT NOW()
 );

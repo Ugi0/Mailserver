@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import db from "../services/db.js";
-import { Alias } from "../types/Alias.js";
+import { Alias, AutoReply } from "../types/mailTypes.js";
 
 const router = Router();
 
@@ -48,11 +48,16 @@ router.get("/", async (req: Request, res: Response) => {
     );
 
     let vacatationEnabled = false;
-    let autoreply = null;
+    let autoreply: AutoReply | null = null;
 
     if (responderResult.rows.length > 0) {
       try {
-        autoreply = JSON.parse(responderResult.rows[0].rule_content);
+        const row = responderResult.rows[0];
+        const parsed = JSON.parse(row.message);
+        autoreply = {
+          id: row.id,
+          ...parsed,
+        };
         vacatationEnabled = !!autoreply?.enabled;
       } catch (err) {
         console.error("Failed to parse autoresponder:", err);

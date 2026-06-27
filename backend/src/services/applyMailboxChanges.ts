@@ -34,7 +34,7 @@ export async function rebuildAndApply(userId: number, email: string) {
   }
 
   for (const r of filters.rows) {
-    sieveFilters.push(JSON.parse(r.rule_content));
+    sieveFilters.push(JSON.parse(r.message));
   }
 
   const payload: any = {
@@ -45,7 +45,11 @@ export async function rebuildAndApply(userId: number, email: string) {
   console.log(payload);
 
   if (responder.rows.length) {
-    payload.autoreply = JSON.parse(responder.rows[0].rule_content);
+    const rule = JSON.parse(responder.rows[0].message);
+
+    if (rule.enabled) {
+      payload.autoreply = rule;
+    }
   }
 
   return sieveClient.post("/v1/sieve/apply", payload);

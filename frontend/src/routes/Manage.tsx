@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import "./Manage.css";
 import { addForwarding, addForwardingAlias, removeForwarding, removeForwardingAlias } from "../helpers/forwarding";
-import type { Alias, ForwardingEmail } from "../types/managementTypes";
+import type { Alias, AutoReply, ForwardingEmail } from "../types/managementTypes";
+import { setAutoReply, toggleAutoReply } from "../helpers/autoreply";
 
 export default function EmailSettingsView() {
   const [aliasInput, setAliasInput] = useState<string>("");
@@ -15,7 +16,7 @@ export default function EmailSettingsView() {
   const [forwardingEmail, setForwardingEmail] = useState<ForwardingEmail | null>(null);
 
   const [vacationEnabled, setVacationEnabled] = useState(false);
-  const [vacationMsg, setVacationMsg] = useState("");
+  const [vacationMsg, setVacationMsg] = useState<AutoReply | null>(null);
 
   useEffect(() => {
     fetch("/api/rules", {
@@ -37,7 +38,7 @@ export default function EmailSettingsView() {
         setForwardingEmail(data.forwardingEmail || null);
 
         setVacationEnabled(data.vacatationEnabled ?? false);
-        setVacationMsg(data.autoreply?.message || "");
+        setVacationMsg(data.autoreply || null);
       })
       .catch((err) => {
         console.error("Error loading settings:", err);
@@ -239,24 +240,43 @@ export default function EmailSettingsView() {
               <input
                 type="checkbox"
                 checked={vacationEnabled}
-                onChange={() =>
+                onChange={() => {
                   setVacationEnabled(!vacationEnabled)
-                }
+                  toggleAutoReply(vacationMsg?.id, !vacationEnabled);
+                }}
               />
               Enable auto-reply
             </label>
 
             {vacationEnabled && (
               <>
+                <input
+                  className="input"
+                  placeholder="Auto-reply subject"
+                  value={vacationMsg?.subject || ""}
+                  onChange={(e) =>
+                    setVacationMsg({
+                      ...vacationMsg,
+                      subject: e.target.value
+                    })
+                  }
+                />
                 <textarea
                   className="textarea"
                   placeholder="Auto-reply message"
-                  value={vacationMsg}
+                  value={vacationMsg?.message || ""}
                   onChange={(e) =>
-                    setVacationMsg(e.target.value)
+                    setVacationMsg({
+                      ...vacationMsg,
+                      message: e.target.value
+                    })
                   }
                 />
-                <button className="btn">Save</button>
+                <button className="btn"
+                  onClick={() => 
+                    setAutoReply(email, vacationMsg?.subject || "", vacationMsg?.message || "", 1)
+                  }
+                >Save</button>
               </>
             )}
           </div>

@@ -23,7 +23,7 @@ router.post("/", async (req: Request, res: Response) => {
     };
 
     const result = await db.query(
-      `INSERT INTO sieve_rules (user_id, rule_content)
+      `INSERT INTO sieve_rules (user_id, message)
        VALUES ($1, $2) RETURNING *`,
       [userId, JSON.stringify(rule)]
     );

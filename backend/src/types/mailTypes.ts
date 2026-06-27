@@ -9,7 +9,9 @@ export type Alias = {
 }
 
 export type AutoReply = {
-    id?: number;
-    subject?: string;
-    message?: string;
+    id: number;
+    subject: string;
+    message: string;
+    enabled?: boolean;
+    days?: number;
 }
