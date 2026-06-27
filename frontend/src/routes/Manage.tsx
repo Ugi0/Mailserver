@@ -3,6 +3,8 @@ import "./Manage.css";
 import { addForwarding, addForwardingAlias, removeForwarding, removeForwardingAlias } from "../helpers/forwarding";
 import type { Alias, AutoReply, ForwardingEmail } from "../types/managementTypes";
 import { setAutoReply, toggleAutoReply } from "../helpers/autoreply";
+import RuleForm from "../components/RuleForm";
+import { addFilter, removeFilter, toggleRule, updateFilter } from "../helpers/filter";
 
 export default function EmailSettingsView() {
   const [aliasInput, setAliasInput] = useState<string>("");
@@ -17,6 +19,9 @@ export default function EmailSettingsView() {
 
   const [vacationEnabled, setVacationEnabled] = useState(false);
   const [vacationMsg, setVacationMsg] = useState<AutoReply | null>(null);
+
+  const [showModal, setShowModal] = useState(false);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/rules", {
@@ -47,6 +52,40 @@ export default function EmailSettingsView() {
         setLoading(false);
       });
   }, []);
+
+  const handleRuleToggle = (index: number) => {
+    const rule = filters[index];
+    console.log("Toggling rule:", rule);
+
+    toggleRule(rule.id, !(rule.enabled !== false)).then(() => {
+      console.log("Rule toggled successfully");
+      setFilters((prev) =>
+        prev.map((r, i) =>
+          i === index ? { ...r, enabled: !r.enabled } : r
+        )
+      );
+    }).catch((err) => {
+      console.error("Error toggling rule:", err);
+    });
+  };
+
+  const handleRuleDelete = (index: number) => {
+    const rule = filters[index];
+
+    const updated = filters.filter((_, i) => i !== index);
+
+    removeFilter(rule.id).then(() => {
+      console.log("Rule deleted successfully");
+      setFilters(updated);
+    }).catch((err) => {
+      console.error("Error deleting rule:", err);
+    });
+  };
+
+  const handleRuleEdit = (index: number) => {
+    setEditingIndex(index);
+    setShowModal(true);
+  };
 
   const addAlias = async () => {
     const email = aliasInput.trim().toLowerCase();
@@ -214,15 +253,81 @@ export default function EmailSettingsView() {
 
             <ul className="list">
               {(filters || []).map((rule, i) => (
-                <li key={i}>
-                  {rule.name || "Unnamed rule"}
+                <li key={i} className="rule-item">
+                  <span>{rule.name || "Unnamed rule"}</span>
+
+                  <div className="rule-actions">
+                    <button
+                      className={`toggle ${rule.enabled !== false ? "on" : "off"}`}
+                      onClick={() => handleRuleToggle(i)}
+                    >
+                      {rule.enabled !== false ? "Disable" : "Enable"}
+                    </button>
+
+                    <button onClick={() => handleRuleEdit(i)}>Edit</button>
+
+                    <button className="danger" onClick={() => handleRuleDelete(i)}>
+                      Delete
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
 
-            <button className="btn">Create Rule</button>
+            <button className="btn" onClick={() => setShowModal(true)}>
+              Create Rule
+            </button>
           </div>
         </div>
+
+        {showModal && (
+          <div className="modal-overlay" onClick={() => setShowModal(false)}>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <h3>{editingIndex !== null ? "Edit Rule" : "Create Rule"}</h3>
+
+              <RuleForm
+                initialRule={editingIndex !== null ? filters[editingIndex] : null}
+                onCancel={() => {
+                  setShowModal(false);
+                  setEditingIndex(null);
+                }}
+                onSave={(rule) => {
+                  const isEditing = editingIndex !== null;
+                  const existingRule = isEditing ? filters[editingIndex] : null;
+
+                  const request = isEditing
+                    ? updateFilter(existingRule.id!, email, rule)
+                    : addFilter(email, rule);
+
+                  request
+                    .then((response) => {
+                      console.log("Rule saved:", response);
+
+                      if (isEditing) {
+                        const updated = [...filters];
+                        updated[editingIndex] = {
+                          ...rule,
+                          id: existingRule.id,
+                        };
+                        setFilters(updated);
+                      } else {
+                        setFilters([
+                          ...filters,
+                          { ...rule, id: response.rule.id },
+                        ]);
+                      }
+
+                      setShowModal(false);
+                      setEditingIndex(null);
+                    })
+                    .catch((err) => {
+                      console.error("Error saving rule:", err);
+                    });
+                }}
+              />
+            </div>
+          </div>
+        )}
 
         <div className="card">
           <div className="card-content">
@@ -251,6 +356,7 @@ export default function EmailSettingsView() {
             {vacationEnabled && (
               <>
                 <input
+                  id="vacation-subject"
                   className="input"
                   placeholder="Auto-reply subject"
                   value={vacationMsg?.subject || ""}
@@ -262,6 +368,7 @@ export default function EmailSettingsView() {
                   }
                 />
                 <textarea
+                  id="vacation-message"
                   className="textarea"
                   placeholder="Auto-reply message"
                   value={vacationMsg?.message || ""}

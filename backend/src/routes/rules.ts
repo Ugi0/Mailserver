@@ -38,7 +38,7 @@ router.get("/", async (req: Request, res: Response) => {
     const forwardingEnabled = forwardingRule?.enabled ?? false;
 
     const filtersResult = await db.query(
-      "SELECT * FROM sieve_rules WHERE user_id = $1",
+      "SELECT * FROM sieve_rules WHERE user_id = $1 ORDER BY priority ASC, id ASC",
       [userId]
     );
 
@@ -55,8 +55,8 @@ router.get("/", async (req: Request, res: Response) => {
         const row = responderResult.rows[0];
         const parsed = JSON.parse(row.message);
         autoreply = {
-          id: row.id,
           ...parsed,
+          id: row.id,
         };
         vacatationEnabled = !!autoreply?.enabled;
       } catch (err) {
@@ -64,12 +64,22 @@ router.get("/", async (req: Request, res: Response) => {
       }
     }
 
+    const filters = (filtersResult.rows || []).map((r) => ({
+      id: r.id,
+      name: r.name,
+      field: r.field,
+      match: r.match_type,
+      value: r.value,
+      action: r.action_config,
+      enabled: r.enabled,
+    }));
+
     res.json({
       email,
       forwardingEmail,
       forwardingEnabled,
       aliases,
-      filters: filtersResult.rows ?? [],
+      filters,
       autoreply,
       vacatationEnabled,
     });

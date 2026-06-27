@@ -20,6 +20,9 @@ export async function rebuildAndApply(userId: number, email: string) {
   const sieveFilters: any[] = [];
 
   for (const f of forwarding.rows) {
+    if (f.destination_email === email) {
+      continue;
+    }
     sieveFilters.push({
       name: `Forward to ${f.destination_email}`,
       field: "to",
@@ -34,7 +37,15 @@ export async function rebuildAndApply(userId: number, email: string) {
   }
 
   for (const r of filters.rows) {
-    sieveFilters.push(JSON.parse(r.message));
+    if (!r.enabled) continue;
+
+    sieveFilters.push({
+      name: r.name,
+      field: r.field,
+      match: r.match_type,
+      value: r.value,
+      action: r.action_config, 
+    });
   }
 
   const payload: any = {

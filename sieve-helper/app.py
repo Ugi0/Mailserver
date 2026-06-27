@@ -62,9 +62,12 @@ class KeepAction(BaseModel):
     type: Literal["keep"]
     stop: bool = False
 
+class DiscardAction(BaseModel):
+    type: Literal["discard"]
+    stop: bool = True
 
 ActionType = Annotated[
-    Union[FileIntoAction, RedirectAction, KeepAction],
+    Union[FileIntoAction, RedirectAction, KeepAction, DiscardAction],
     Field(discriminator="type"),
 ]
 
@@ -186,6 +189,13 @@ def build_action(action: ActionType, requires: Set[str]) -> List[str]:
 
     elif action.type == "keep":
         lines.append("  keep;")
+        if action.stop:
+            lines.append("  stop;")
+
+    elif action.type == "discard":
+        requires.add("discard")
+        lines.append("  discard;")
+
         if action.stop:
             lines.append("  stop;")
 

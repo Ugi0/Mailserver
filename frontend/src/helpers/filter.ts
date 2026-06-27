@@ -1,6 +1,7 @@
+import type { FilterRule } from "../types/filterRule";
 import { handleResponse } from "./forwarding";
 
-export async function addFilter(email: string, field: string, value: string, folder: string): Promise<any | null> {
+export async function addFilter(email: string, rule: FilterRule): Promise<any | null> {
   const response = await fetch("/api/filter", {
     method: "POST",
     credentials: "include",
@@ -9,13 +10,24 @@ export async function addFilter(email: string, field: string, value: string, fol
     },
     body: JSON.stringify({
       email,
-      field,
-      value,
-      folder,
+      rule,
     }),
   });
 
   return handleResponse(response);
+}
+
+export async function updateFilter(id: number, email: string, rule: FilterRule) {
+  const res = await fetch(`/api/filter/${id}`, {
+    method: "PATCH",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, rule }),
+  });
+
+  return handleResponse(res);
 }
 
 export async function removeFilter(ruleId: number): Promise<any | null> {
@@ -27,25 +39,14 @@ export async function removeFilter(ruleId: number): Promise<any | null> {
   return handleResponse(response);
 }
 
-export async function toggleRule(id: number, enabled: boolean, setRules: React.Dispatch<React.SetStateAction<ForwardingRule[]>>) {
-  setRules((prev: ForwardingRule[]) =>
-    prev.map((r) =>
-      r.id === id ? { ...r, enabled } : r
-    )
-  );
+export async function toggleRule(id: number, enabled: boolean) {
 
-  await fetch(`/api/forward/${id}/toggle`, {
-    method: "POST",
+  await fetch(`/api/filter/${id}/toggle`, {
+    method: "PATCH",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ enabled }),
   });
-}
-
-export type ForwardingRule = {
-  id: number;
-  destination_email: string;
-  enabled: boolean;
 }

@@ -40,7 +40,7 @@ api.use("/registration-code", handleRegistrationCode);
 
 api.use("/users", handleUsers);
 api.use("/rules", authMiddleware, handleRules);
-api.use("/filters", authMiddleware, handleFilters);
+api.use("/filter", authMiddleware, handleFilters);
 api.use("/alias", authMiddleware, handleAliases);
 api.use("/forwarding", authMiddleware, handleForwarding);
 api.use("/autoreply", authMiddleware, handleAutoReply);

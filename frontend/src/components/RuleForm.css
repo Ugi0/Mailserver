@@ -1,0 +1,155 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
+}
+
+.modal {
+  background: #181a1b;
+  border: 1px solid #2a2d2e;
+  color: #e5e7eb;
+
+  padding: 20px;
+  border-radius: 16px;
+  width: 420px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+
+  animation: modalFade 0.2s ease;
+
+  .form {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.modal h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.modal .input,
+.modal select {
+  width: 100%;
+  margin-bottom: 10px;
+
+  background: #0f1112;
+  border: 1px solid #2a2d2e;
+  color: #e5e7eb;
+
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.modal .input {
+    width: 90%;
+}
+
+.modal .input::placeholder {
+  color: #6b7280;
+}
+
+.modal .input:focus,
+.modal select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.modal-actions button {
+  background: transparent;
+  border: 1px solid #2a2d2e;
+  color: #e5e7eb;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal-actions button:hover {
+  background: #2a2d2e;
+}
+
+.modal-actions .btn {
+  background: #2563eb;
+  border: none;
+  color: white;
+}
+
+.modal-actions .btn:hover {
+  background: #1d4ed8;
+}
+
+@keyframes modalFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.rule-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px;
+  border-radius: 10px;
+  background: #181a1b;
+  border: 1px solid #2a2d2e;
+  margin-bottom: 8px;
+}
+
+.rule-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.rule-actions button {
+  background: #2a2d2e;
+  border: none;
+  color: #e5e7eb;
+  padding: 5px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.rule-actions button:hover {
+  background: #3a3d3e;
+}
+
+.rule-actions .danger {
+  background: #7f1d1d;
+}
+
+.rule-actions .danger:hover {
+  background: #991b1b;
+}
+
+.toggle.on {
+  background: #065f46;
+}
+
+.toggle.off {
+  background: #374151;
+}

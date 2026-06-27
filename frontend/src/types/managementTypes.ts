@@ -13,3 +13,9 @@ export type AutoReply = {
     subject?: string;
     message?: string;
 }
+
+export type ForwardingRule = {
+  id: number;
+  destination_email: string;
+  enabled: boolean;
+}
