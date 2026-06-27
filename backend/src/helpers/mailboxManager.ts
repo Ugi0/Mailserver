@@ -126,3 +126,52 @@ export async function removeAlias(email: string, alias: string): Promise<void> {
     });
   });
 }
+
+export async function sendWelcomeEmail(email: string): Promise<void> {
+  if (!validateEmail(email)) {
+    throw new Error("Invalid email format");
+  }
+
+  const message = `From: welcome@tokkicorp.com
+To: ${email}
+Subject: Welcome to TokkiCorp!
+
+Welcome! Your mailbox has been created.
+`;
+
+  await new Promise<void>((resolve, reject) => {
+    const proc = spawn(
+      "docker",
+      [
+        "exec",
+        "-i",
+        "mailserver",
+        "sendmail",
+        "-f",
+        "welcome@tokkicorp.com",
+        email,
+      ],
+      {
+        stdio: ["pipe", "pipe", "pipe"],
+      }
+    );
+
+    let errOutput = "";
+
+    proc.stdin.write(message);
+    proc.stdin.end();
+
+    proc.stderr.on("data", (data) => {
+      errOutput += data.toString();
+    });
+
+    proc.on("close", (code) => {
+      if (code !== 0) {
+        return reject(
+          new Error(`Sending welcome email failed: ${errOutput}`)
+        );
+      }
+      resolve();
+    });
+  });
+}

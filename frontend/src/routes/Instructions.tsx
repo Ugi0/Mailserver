@@ -16,6 +16,11 @@ export default function Instructions() {
         credentials: "include",
       });
 
+      if (response.status === 401) {
+        window.location.href = "/";
+        return;
+      }
+
       if (response.ok) {
         const data = await response.json();
         setAgreedToRules(data.agreedToTerms);

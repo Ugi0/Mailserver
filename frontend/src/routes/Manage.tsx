@@ -29,6 +29,9 @@ export default function EmailSettingsView() {
       credentials: "include",
     })
       .then(async (response) => {
+        if (response.status === 401) {
+          window.location.href = "/";
+        }
         if (!response.ok) throw new Error("Failed to fetch rules");
         return response.json();
       })
@@ -44,13 +47,12 @@ export default function EmailSettingsView() {
 
         setVacationEnabled(data.vacatationEnabled ?? false);
         setVacationMsg(data.autoreply || null);
+
+        setLoading(false);
       })
       .catch((err) => {
         console.error("Error loading settings:", err);
       })
-      .finally(() => {
-        setLoading(false);
-      });
   }, []);
 
   const handleRuleToggle = (index: number) => {

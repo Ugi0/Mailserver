@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { authMiddleware } from "../helpers/middleware.js";
-import { createMailbox } from "../helpers/mailboxManager.js";
+import { createMailbox, sendWelcomeEmail } from "../helpers/mailboxManager.js";
 import db from "../services/db.js";
 import { hasUserAgreedToTerms, isUsernameFree, validateRegistrationCode, verifyUser } from "../services/db_queries.js";
 import { agreeToTerms, createUser, markCodeAsUsed } from "../services/db_updates.js";
@@ -47,6 +47,8 @@ router.post("/create", async (req: Request, res: Response) => {
 
     try {
       await createMailbox(email, password);
+
+      await sendWelcomeEmail(email);
       
       userId = await createUser(email, password);
       await markCodeAsUsed(registrationCode, userId);
